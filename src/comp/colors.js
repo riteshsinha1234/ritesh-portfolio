@@ -1,0 +1,12 @@
+export const white = '#FFFFFF';
+export const black = '#000000';
+export const lightbrown = '#745800';
+export const darkbrown = '#533F00';
+export const lancolor = '#F1E2CA';
+export const diviclr = '#C4C4C4';
+export const paratxt = '#555555';
+export const form = '#FAEBCD';
+export const background = '#FFF4DF'
+export const nonselectable = '#DADADA';
+export const selectable = '#6B6B6B'
+export const headertxt = '#666666';
