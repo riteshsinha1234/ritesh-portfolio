@@ -1,10 +1,9 @@
 "use client";
 import store from "@/hooks/store";
 import { themesStore } from "@/hooks/theme";
-import { Button, Container, Text } from "@mantine/core";
+import { Button, Container } from "@mantine/core";
 import Link from "next/link";
 import React from "react";
-import ThemeChanger from "./ThemeChanger";
 
 const Links = [
   {

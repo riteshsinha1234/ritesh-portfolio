@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import { createNoise3D } from "simplex-noise";
 import { motion } from "framer-motion";
 
@@ -53,19 +53,13 @@ export const Vortex = (props: VortexProps) => {
   const lerp = (n1: number, n2: number, speed: number): number =>
     (1 - speed) * n1 + speed * n2;
 
-  const setup = () => {
-    const canvas = canvasRef.current;
-    const container = containerRef.current;
-    if (canvas && container) {
-      const ctx = canvas.getContext("2d");
-
-      if (ctx) {
-        resize(canvas);
-        initParticles();
-        draw(canvas, ctx);
-      }
-    }
-  };
+  const resize = useCallback((canvas: HTMLCanvasElement) => {
+    const { innerWidth, innerHeight } = window;
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+    center[0] = 0.5 * canvas.width;
+    center[1] = 0.5 * canvas.height;
+  }, []);
 
   const initParticles = () => {
     tick = 0;
@@ -182,16 +176,6 @@ export const Vortex = (props: VortexProps) => {
     return x > canvas.width || x < 0 || y > canvas.height || y < 0;
   };
 
-  const resize = (canvas: HTMLCanvasElement) => {
-    const { innerWidth, innerHeight } = window;
-
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
-
-    center[0] = 0.5 * canvas.width;
-    center[1] = 0.5 * canvas.height;
-  };
-
   const renderGlow = (
     canvas: HTMLCanvasElement,
     ctx: CanvasRenderingContext2D
@@ -219,16 +203,31 @@ export const Vortex = (props: VortexProps) => {
     ctx.restore();
   };
 
+  const setup = useCallback(() => {
+    const canvas = canvasRef.current;
+    const container = containerRef.current;
+    if (canvas && container) {
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        resize(canvas);
+        initParticles();
+        draw(canvas, ctx);
+      }
+    }
+  }, [resize]);
+
   useEffect(() => {
     setup();
-    window.addEventListener("resize", () => {
+    const handleResize = () => {
       const canvas = canvasRef.current;
-      const ctx = canvas?.getContext("2d");
-      if (canvas && ctx) {
+      if (canvas) {
         resize(canvas);
       }
-    });
-  }, []);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [resize, setup]);
 
   return (
     <div className={cn("relative h-full w-full", props.containerClassName)}>
@@ -238,7 +237,10 @@ export const Vortex = (props: VortexProps) => {
         ref={containerRef}
         className="absolute inset-0 z-0 bg-transparent flex items-center justify-center"
       >
-        <canvas ref={canvasRef} className="my-20 !w-full !h-full bg-transparent"></canvas>
+        <canvas
+          ref={canvasRef}
+          className="my-20 !w-full !h-full bg-transparent"
+        ></canvas>
       </motion.div>
 
       <div className={cn("relative z-10", props.className)}>

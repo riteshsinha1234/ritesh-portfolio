@@ -36,11 +36,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased bg-gradient-to-r from-slate-900 to-neutral-900`}
       >
-        <MantineProvider>
-          <Navbar />
-          <main className="mt-20 lg:mt-14">{children}</main>
-          <Footer />
-        </MantineProvider>
+        <div id="box_moving_animation">
+          <MantineProvider>
+            <Navbar />
+            <main className="mt-20 lg:mt-14">{children}</main>
+            <Footer />
+          </MantineProvider>
+        </div>
       </body>
     </html>
   );
